@@ -146,6 +146,65 @@ def _extract_bank_names(text: str, fields: Dict[str, str]) -> None:
 - **Validaciones**: Verifica credenciales AWS antes de continuar
 - **Tipos de archivo**: Soporta JPG, PNG, PDF
 
+## FUNCIONAMIENTO
+
+
+## 🧠 **Dos "servicios" o capas distintas en el proceso**
+
+### 🔹 1. **OCR con IA** → *Textract (`extract_text_simple`)*
+
+* Es el **servicio de reconocimiento de texto (OCR)** de [AWS Textract](w).
+* Detecta el **texto visual** en una imagen escaneada (como un comprobante bancario).
+* **No interpreta** lo que ese texto significa, solo lo reconoce y lo devuelve como líneas o palabras.
+* Es como un escáner con **visión artificial inteligente**, que ve:
+
+  ```
+  "Importe enviado S/ 1250.00"
+  ```
+
+---
+
+### 🔹 2. **Servicio tipo “tag” semántico** → *`BankingDataExtractor`*
+
+* Es un **servicio personalizado**, hecho por ti (o el desarrollador).
+* Usa expresiones regulares para **“etiquetar” o clasificar** partes del texto como:
+
+  * `importe_enviado`, `fecha`, `comisión`, etc.
+* Es como un **motor de reglas semánticas** que dice:
+
+  >  `Importe enviado S/ X`, eso es el campo `importe_enviado`.”
+
+---
+
+## 🧪 Definicion:
+
+> AWS Textract es como un lector que **lee** el contenido de una carta (OCR),
+> `BankingDataExtractor` es un asistente que **resalta lo importante** con marcadores: el nombre del remitente, la fecha, el asunto, etc.
+
+---
+
+## 🧩 Diagrama:
+
+```
+🖼️ Imagen JPG/PDF
+     │
+     ▼
+🧠 AWS Textract (OCR IA)
+     └──▶ Texto plano
+              │
+              ▼
+🧾 BankingDataExtractor (Regex/tagger)
+              └──▶ Datos estructurados clave-valor
+```
+
+---
+
+## ✅ Conclusión:
+
+> Se usan 2 servicios: uno (Textract) es como un **OCR con inteligencia artificial** que extrae el texto visible, y el otro (el extractor con regex) **etiqueta o clasifica semánticamente** ese texto para obtener información útil y estructurada.
+
+
+
 ## 🔧 Configuración y Uso
 
 ### 1. Configuración de AWS
